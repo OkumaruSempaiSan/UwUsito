@@ -2932,6 +2932,76 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		return instance:IsA("LuaSourceContainer")
 	end
 
+	-- Función para actualizar la barra de progreso de decompilación
+	local function updateDecompilationProgress()
+		if not progressBarFrame or not progressBar or not progressText then
+			return
+		end
+
+		-- Calcular porcentaje
+		local percent = 0
+		if totalScriptsToDecompile > 0 then
+			percent = math.floor((decompiledScriptsCount / totalScriptsToDecompile) * 100)
+		end
+
+		-- Actualizar barra de progreso
+		progressBar.Size = UDim2.new(0, 0, 1, 0)
+		task.spawn(function()
+			local targetSize = percent / 100
+			local startTime = tick()
+			local duration = 0.3 -- Duración de la animación en segundos
+
+			while true do
+				local elapsed = tick() - startTime
+				local progress = math.min(elapsed / duration, 1)
+				local currentPercent = progress * targetSize
+				progressBar.Size = UDim2.new(currentPercent, 0, 1, 0)
+
+				if progress >= 1 then
+					break
+				end
+
+				task.wait()
+			end
+		end)
+
+		-- Actualizar texto con porcentaje
+		local colorPink = Color3.fromRGB(255, 105, 180)
+		local colorLightPink = Color3.fromRGB(255, 182, 193)
+
+		if percent >= 100 then
+			colorPink = Color3.fromRGB(0, 255, 0) -- Verde cuando termina
+			colorLightPink = Color3.fromRGB(144, 238, 144) -- Verde claro
+			progressText.Text = "¡Completado! " .. decompiledScriptsCount .. "/" .. totalScriptsToDecompile .. " scripts"
+		else
+			progressText.Text = "Decompilando: " .. percent .. "%"
+		end
+
+		-- Actualizar colores de la barra
+		progressBar.BackgroundColor3 = colorPink
+		progressBarGlow.BackgroundColor3 = colorLightPink
+	end
+
+	local function setTotalScripts(total)
+		totalScriptsToDecompile = total
+	end
+
+	local function incrementDecompiledCount()
+		decompiledScriptsCount += 1
+		updateDecompilationProgress()
+	end
+
+	local function resetDecompilationProgress()
+		decompiledScriptsCount = 0
+		totalScriptsToDecompile = 0
+		if progressBar then
+			progressBar.Size = UDim2.new(0, 0, 1, 0)
+		end
+		if progressText then
+			progressText.Text = "Preparando..."
+		end
+	end
+
 	do
 		local mode = string.lower(OPTIONS.mode)
 		local tmp = table.clone(OPTIONS.ExtraInstances)
@@ -3081,6 +3151,18 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 
 		if ToSaveInstance then
 			table.insert(ToSaveList, 1, ToSaveInstance)
+		end
+
+		-- Contar scripts totales para la barra de progreso
+		if OPTIONS.ShowStatus then
+			local totalScripts = 0
+			for _, instance in next, ToSaveList do
+				if isLuaSourceContainer(instance) then
+					totalScripts += 1
+				end
+			end
+			setTotalScripts(totalScripts)
+			resetDecompilationProgress()
 		end
 	end
 
@@ -3263,6 +3345,11 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 					if __DEBUG_MODE then
 						__DEBUG_MODE("Cached", script:GetFullName())
 					end
+				end
+
+				-- Incrementar contador de scripts decompilados y actualizar barra de progreso
+				if OPTIONS.ShowStatus and progressBarFrame and progressBar and progressText then
+					incrementDecompiledCount()
 				end
 
 				return output
@@ -4552,6 +4639,11 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 					return
 				end
 			end
+		end
+
+		-- Resetear progreso antes de guardar
+		if OPTIONS.ShowStatus and progressBarFrame and progressBar and progressText then
+			resetDecompilationProgress()
 		end
 
 		elapse_t = os.clock()
