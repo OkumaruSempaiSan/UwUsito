@@ -1,0 +1,30 @@
+UniversalSave - repo URL and no-decompile notes
+
+RepoURL configured in examples/documentation:
+https://raw.githubusercontent.com/OkumaruSempaiSan/UwUsito/main/
+
+Use it like this:
+
+local Params = {
+    RepoURL = "https://raw.githubusercontent.com/OkumaruSempaiSan/UwUsito/main/",
+    SSI = "saveinstance",
+}
+local synsaveinstance = loadstring(game:HttpGet(Params.RepoURL .. Params.SSI .. ".luau", true), Params.SSI)()
+
+local Options = {
+    Decompile = false,
+    SaveBytecode = false,
+    scriptcache = false,
+}
+
+synsaveinstance(Options)
+
+This build forces these options off after custom options load:
+- Decompile
+- DecompileJobless
+- scriptcache
+- SaveBytecode
+
+So Script, LocalScript, and ModuleScript source/bytecode is not exported or decompiled.
+
+Note: original LICENSE/credit text was kept. Removing required license/credit attribution can violate the project license.
