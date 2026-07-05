@@ -3,7 +3,7 @@
 
 === VERSIÓN LUAU (RECOMENDADA) ===
 local Params = {
-    RepoURL = "https://raw.githubusercontent.com/OkumaruSempaiSan/UwUsito/main/",
+    RepoURL = "https://raw.githubusercontent.com/OkumaruSempaiSan/UwUsito/update-loadstring-format/",
     SSI = "saveinstance",
 } 
 
@@ -22,7 +22,7 @@ synsaveinstance(Options)
 
 === VERSIÓN LUA (COMPATIBILIDAD) ===
 local Params = {
-    RepoURL = "https://raw.githubusercontent.com/OkumaruSempaiSan/UwUsito/main/",
+    RepoURL = "https://raw.githubusercontent.com/OkumaruSempaiSan/UwUsito/update-loadstring-format/",
     SSI = "saveinstance",
 } 
 
