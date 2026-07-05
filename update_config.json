@@ -1,0 +1,10 @@
+{
+  "update_showstatus": true,
+  "showstatus_value": false,
+  "update_safemode": true,
+  "safemode_value": false,
+  "update_version": false,
+  "new_version": "1.5",
+  "auto_commit": true,
+  "commit_message": "Auto update from script"
+}
