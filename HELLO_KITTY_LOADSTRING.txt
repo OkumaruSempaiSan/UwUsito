@@ -1,97 +1,68 @@
 -- 💖 HELLO KITTY PINK SAVEINSTANCE LOADER 💖
--- 🎀 Versión kawaii con tema rosa Hello Kitty
+-- 🎀 Versión kawaii compacta (esquina derecha, se cierra automáticamente)
 
 local Params = {
     RepoURL = "https://raw.githubusercontent.com/OkumaruSempaiSan/UwUsito/update-loadstring-format/",
     SSI = "saveinstance",
 }
 
--- 🌸 Crear interfaz de carga kawaii
-local function createKawaiiLoadingUI()
-    if not game:GetService("CoreGui") then return end
+-- 🌸 Crear interfaz de carga kawaii COMPACTA
+local function createCompactKawaiiUI()
+    if not game:GetService("CoreGui") then return nil end
     
     local screenGui = Instance.new("ScreenGui")
-    screenGui.Name = "KawaiiSaveInstanceLoader"
+    screenGui.Name = "KawaiiCompactLoader"
     screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     screenGui.Parent = game:GetService("CoreGui")
     
-    -- 🎀 Fondo rosa translúcido
-    local background = Instance.new("Frame")
-    background.Name = "Background"
-    background.BackgroundColor3 = Color3.fromRGB(255, 182, 193) -- Rosa claro
-    background.BackgroundTransparency = 0.2
-    background.Size = UDim2.new(1, 0, 1, 0)
-    background.Parent = screenGui
-    
-    -- 🐱 Contenedor principal
+    -- 🐱 Contenedor principal COMPACTO (esquina superior derecha)
     local mainFrame = Instance.new("Frame")
     mainFrame.Name = "MainFrame"
     mainFrame.BackgroundColor3 = Color3.fromRGB(255, 105, 180) -- Rosa hot pink
-    mainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
-    mainFrame.Size = UDim2.new(0.4, 0, 0.4, 0)
+    mainFrame.Position = UDim2.new(0.75, 0, 0.02, 0) -- Esquina derecha, cerca del borde superior
+    mainFrame.Size = UDim2.new(0.23, 0, 0.08, 0) -- Mucho más pequeño
     mainFrame.Parent = screenGui
     
     -- ✨ Borde brillante
     local uiCorner = Instance.new("UICorner")
-    uiCorner.CornerRadius = UDim.new(0.1, 0)
+    uiCorner.CornerRadius = UDim.new(0.15, 0)
     uiCorner.Parent = mainFrame
     
     local uiStroke = Instance.new("UIStroke")
     uiStroke.Color = Color3.fromRGB(255, 255, 255) -- Blanco
-    uiStroke.Thickness = 3
+    uiStroke.Thickness = 2
     uiStroke.Parent = mainFrame
     
-    -- 🌸 Título kawaii
-    local title = Instance.new("TextLabel")
-    title.Name = "Title"
-    title.Text = "💖 Hello Kitty SaveInstance 💖"
-    title.TextColor3 = Color3.fromRGB(255, 255, 255) -- Blanco
-    title.TextScaled = true
-    title.Font = Enum.Font.Fantasy
-    title.BackgroundTransparency = 1
-    title.Position = UDim2.new(0.1, 0, 0.05, 0)
-    title.Size = UDim2.new(0.8, 0, 0.2, 0)
-    title.Parent = mainFrame
-    
-    -- 🎀 Mensaje de estado
-    local statusLabel = Instance.new("TextLabel")
-    statusLabel.Name = "StatusLabel"
-    statusLabel.Text = "🌸 Preparando SaveInstance kawaii..."
-    statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    statusLabel.TextScaled = true
-    statusLabel.Font = Enum.Font.Cartoon
-    statusLabel.BackgroundTransparency = 1
-    statusLabel.Position = UDim2.new(0.1, 0, 0.3, 0)
-    statusLabel.Size = UDim2.new(0.8, 0, 0.2, 0)
-    statusLabel.Parent = mainFrame
-    
-    -- 🐱 Icono de carga (corazones animados)
+    -- 🌸 Icono pequeño (corazón animado)
     local loadingIcon = Instance.new("TextLabel")
     loadingIcon.Name = "LoadingIcon"
-    loadingIcon.Text = "💗💖💕💞💓"
+    loadingIcon.Text = "💖"
     loadingIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
     loadingIcon.TextScaled = true
     loadingIcon.Font = Enum.Font.Fantasy
     loadingIcon.BackgroundTransparency = 1
-    loadingIcon.Position = UDim2.new(0.1, 0, 0.5, 0)
-    loadingIcon.Size = UDim2.new(0.8, 0, 0.2, 0)
+    loadingIcon.Position = UDim2.new(0.05, 0, 0.1, 0)
+    loadingIcon.Size = UDim2.new(0.15, 0, 0.8, 0)
     loadingIcon.Parent = mainFrame
     
-    -- Animación de corazones
-    local heartAnimation = 0
-    game:GetService("RunService").Heartbeat:Connect(function()
-        heartAnimation = heartAnimation + 0.1
-        local heartPattern = "💗💖💕💞💓"
-        local offset = math.floor(heartAnimation % 5)
-        loadingIcon.Text = heartPattern:sub(offset*3 + 1) .. heartPattern:sub(1, offset*3)
-    end)
+    -- 🎀 Mensaje de estado COMPACTO
+    local statusLabel = Instance.new("TextLabel")
+    statusLabel.Name = "StatusLabel"
+    statusLabel.Text = "🌸 Cargando..."
+    statusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    statusLabel.TextScaled = true
+    statusLabel.Font = Enum.Font.Cartoon
+    statusLabel.BackgroundTransparency = 1
+    statusLabel.Position = UDim2.new(0.25, 0, 0.1, 0)
+    statusLabel.Size = UDim2.new(0.7, 0, 0.8, 0)
+    statusLabel.Parent = mainFrame
     
-    -- 📊 Barra de progreso rosa
+    -- 📊 Barra de progreso mini
     local progressBarBack = Instance.new("Frame")
     progressBarBack.Name = "ProgressBarBack"
     progressBarBack.BackgroundColor3 = Color3.fromRGB(255, 255, 255) -- Blanco
-    progressBarBack.Position = UDim2.new(0.1, 0, 0.75, 0)
-    progressBarBack.Size = UDim2.new(0.8, 0, 0.1, 0)
+    progressBarBack.Position = UDim2.new(0.02, 0, 0.85, 0)
+    progressBarBack.Size = UDim2.new(0.96, 0, 0.1, 0)
     progressBarBack.Parent = mainFrame
     
     local progressBarCorner = Instance.new("UICorner")
@@ -109,6 +80,19 @@ local function createKawaiiLoadingUI()
     progressBarCorner2.CornerRadius = UDim.new(0.5, 0)
     progressBarCorner2.Parent = progressBar
     
+    -- Animación de corazón pulsante
+    local heartSize = 1
+    local heartDirection = 1
+    game:GetService("RunService").Heartbeat:Connect(function(delta)
+        heartSize = heartSize + (delta * 2 * heartDirection)
+        if heartSize > 1.3 then
+            heartDirection = -1
+        elseif heartSize < 0.9 then
+            heartDirection = 1
+        end
+        loadingIcon.TextSize = 18 * heartSize
+    end)
+    
     -- Función para actualizar estado
     local function updateStatus(text, progress)
         statusLabel.Text = text
@@ -117,8 +101,18 @@ local function createKawaiiLoadingUI()
         end
     end
     
-    -- Función para cerrar
+    -- Función para cerrar CON animación
     local function closeUI()
+        -- Animación de desvanecimiento
+        for i = 1, 0, -0.1 do
+            mainFrame.BackgroundTransparency = 1 - i
+            uiStroke.Transparency = 1 - i
+            statusLabel.TextTransparency = 1 - i
+            loadingIcon.TextTransparency = 1 - i
+            progressBarBack.BackgroundTransparency = 1 - i
+            progressBar.BackgroundTransparency = 1 - i
+            task.wait(0.02)
+        end
         screenGui:Destroy()
     end
     
@@ -129,15 +123,21 @@ local function createKawaiiLoadingUI()
     }
 end
 
--- 🎀 Función principal kawaii
+-- 🎀 Función principal kawaii MEJORADA
 local function loadKawaiiSaveInstance()
     print("🌸 Iniciando Hello Kitty SaveInstance...")
     
-    -- Crear interfaz de carga
-    local loadingUI = createKawaiiLoadingUI()
-    loadingUI.UpdateStatus("🌸 Descargando script kawaii...", 0.2)
+    -- Crear interfaz de carga compacta
+    local loadingUI = createCompactKawaiiUI()
+    if not loadingUI then
+        print("❌ No se pudo crear la interfaz (CoreGui no disponible)")
+        -- Continuar sin interfaz
+        loadWithoutUI()
+        return
+    end
     
-    -- Descargar script
+    -- Paso 1: Descargar script
+    loadingUI.UpdateStatus("📥 Descargando...", 0.2)
     local scriptContent
     local success, err = pcall(function()
         scriptContent = game:HttpGet(Params.RepoURL .. Params.SSI .. ".luau", true)
@@ -145,51 +145,50 @@ local function loadKawaiiSaveInstance()
     end)
     
     if not success then
-        loadingUI.UpdateStatus("❌ Error al descargar: " .. tostring(err), 0)
-        task.wait(2)
+        loadingUI.UpdateStatus("❌ Error descarga", 0)
+        task.wait(1)
         loadingUI.Close()
         return
     end
     
-    loadingUI.UpdateStatus("✅ Script descargado! (" .. #scriptContent .. " bytes)", 0.4)
-    task.wait(0.5)
+    loadingUI.UpdateStatus("✅ Descargado", 0.4)
+    task.wait(0.3)
     
-    -- Cargar script
-    loadingUI.UpdateStatus("🎀 Cargando SaveInstance...", 0.6)
-    
+    -- Paso 2: Cargar script
+    loadingUI.UpdateStatus("🎀 Cargando...", 0.6)
     local loadSuccess, loadedFunc = pcall(function()
         return loadstring(scriptContent, Params.SSI)
     end)
     
     if not loadSuccess then
-        loadingUI.UpdateStatus("❌ Error al cargar: " .. tostring(loadedFunc), 0)
-        task.wait(2)
+        loadingUI.UpdateStatus("❌ Error carga", 0)
+        task.wait(1)
         loadingUI.Close()
         return
     end
     
-    loadingUI.UpdateStatus("💖 Parseando código...", 0.8)
-    task.wait(0.5)
+    loadingUI.UpdateStatus("💖 Parseando...", 0.8)
+    task.wait(0.3)
     
-    -- Ejecutar script
+    -- Paso 3: Ejecutar script
     local execSuccess, synsaveinstance = pcall(function()
         return loadedFunc()
     end)
     
     if not execSuccess then
-        loadingUI.UpdateStatus("❌ Error al ejecutar: " .. tostring(synsaveinstance), 0)
-        task.wait(2)
+        loadingUI.UpdateStatus("❌ Error ejecución", 0)
+        task.wait(1)
         loadingUI.Close()
         return
     end
     
-    loadingUI.UpdateStatus("🎉 SaveInstance listo! 🐱", 1.0)
-    task.wait(1)
+    loadingUI.UpdateStatus("🎉 Listo! 🐱", 1.0)
+    task.wait(0.5)
     
-    -- Cerrar interfaz de carga
+    -- Cerrar interfaz ANTES de ejecutar SaveInstance
     loadingUI.Close()
     
-    -- Configurar opciones con tema kawaii
+    -- Configurar opciones
     local Options = {
         Decompile = false,
         SaveBytecode = false,
@@ -198,7 +197,65 @@ local function loadKawaiiSaveInstance()
         ShowStatus = true,
     }
     
-    print("💖 Ejecutando SaveInstance con tema Hello Kitty...")
+    print("💖 Ejecutando SaveInstance...")
+    
+    -- Ejecutar SaveInstance (esto abrirá SU propia interfaz)
+    local runSuccess, runError = pcall(function()
+        synsaveinstance(Options)
+    end)
+    
+    if not runSuccess then
+        print("❌ Error al ejecutar SaveInstance:", runError)
+    else
+        print("🎉 SaveInstance ejecutado exitosamente!")
+    end
+end
+
+-- 🎀 Versión alternativa sin interfaz (si CoreGui no está disponible)
+local function loadWithoutUI()
+    print("🌸 Cargando SaveInstance sin interfaz...")
+    
+    -- Descargar script
+    local scriptContent
+    local success, err = pcall(function()
+        return game:HttpGet(Params.RepoURL .. Params.SSI .. ".luau", true)
+    end)
+    
+    if not success then
+        print("❌ Error al descargar:", err)
+        return
+    end
+    
+    print("✅ Script descargado (" .. #scriptContent .. " bytes)")
+    
+    -- Cargar script
+    local loadSuccess, loadedFunc = pcall(function()
+        return loadstring(scriptContent, Params.SSI)
+    end)
+    
+    if not loadSuccess then
+        print("❌ Error al cargar:", loadedFunc)
+        return
+    end
+    
+    -- Ejecutar script
+    local execSuccess, synsaveinstance = pcall(function()
+        return loadedFunc()
+    end)
+    
+    if not execSuccess then
+        print("❌ Error al ejecutar:", synsaveinstance)
+        return
+    end
+    
+    -- Configurar opciones
+    local Options = {
+        Decompile = false,
+        SaveBytecode = false,
+        scriptcache = false,
+        SafeMode = false,
+        ShowStatus = true,
+    }
     
     -- Ejecutar SaveInstance
     local runSuccess, runError = pcall(function()
@@ -206,38 +263,17 @@ local function loadKawaiiSaveInstance()
     end)
     
     if not runSuccess then
-        print("❌ Error al ejecutar SaveInstance:", runError)
-        
-        -- Crear mensaje de error kawaii
-        local errorGUI = Instance.new("ScreenGui")
-        errorGUI.Name = "KawaiiError"
-        errorGUI.Parent = game:GetService("CoreGui")
-        
-        local errorFrame = Instance.new("Frame")
-        errorFrame.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
-        errorFrame.Position = UDim2.new(0.35, 0, 0.4, 0)
-        errorFrame.Size = UDim2.new(0.3, 0, 0.2, 0)
-        errorFrame.Parent = errorGUI
-        
-        local errorCorner = Instance.new("UICorner")
-        errorCorner.CornerRadius = UDim.new(0.1, 0)
-        errorCorner.Parent = errorFrame
-        
-        local errorLabel = Instance.new("TextLabel")
-        errorLabel.Text = "😿 Ups! Algo salió mal:\n" .. tostring(runError)
-        errorLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        errorLabel.TextScaled = true
-        errorLabel.BackgroundTransparency = 1
-        errorLabel.Size = UDim2.new(1, 0, 1, 0)
-        errorLabel.Parent = errorFrame
-        
-        task.wait(5)
-        errorGUI:Destroy()
+        print("❌ Error final:", runError)
     else
-        print("🎉 SaveInstance ejecutado exitosamente!")
-        print("🐱 ¡Disfruta de tu SaveInstance kawaii!")
+        print("🎉 SaveInstance cargado!")
     end
 end
 
--- 🚀 Iniciar automáticamente
-loadKawaiiSaveInstance()
+-- 🚀 Iniciar automáticamente (con timeout de seguridad)
+task.spawn(function()
+    loadKawaiiSaveInstance()
+end)
+
+-- ⏰ Timeout de seguridad (si se queda atascado)
+task.wait(10)
+print("⏰ Timeout: Si no ves la interfaz de SaveInstance, algo salió mal.")

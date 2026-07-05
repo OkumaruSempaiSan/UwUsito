@@ -1,8 +1,10 @@
--- LOADSTRINGS UNIVERSAL SYN SAVE INSTANCE v1.2 --
+-- LOADSTRINGS UNIVERSAL SYN SAVE INSTANCE v1.3 --
 -- 🎮 Versión actualizada con SafeMode deshabilitado y barra de progreso mejorada
 
 === VERSIÓN HELLO KITTY PINK (KAWAII) ===
--- 💖 Versión con interfaz Hello Kitty pink y mejor manejo de errores
+-- 💖 Versión COMPACTA con interfaz Hello Kitty pink (esquina derecha)
+-- 🎀 Interfaz pequeña que se cierra automáticamente al terminar
+-- 🐱 No se queda atascada en "preparando"
 -- Código completo en: HELLO_KITTY_LOADSTRING.txt
 
 === VERSIÓN LUAU (RECOMENDADA) ===
@@ -127,14 +129,16 @@ else
 end
 
 -- ================================================
--- 🚀 MEJORAS APLICADAS (v1.2):
+-- 🚀 MEJORAS APLICADAS (v1.3):
 -- ❌ SafeMode DESHABILITADO por defecto - Ya no te hace kick
--- 💖 Nueva versión Hello Kitty Pink con interfaz kawaii
+-- 💖 Versión Hello Kitty Pink COMPACTA (esquina derecha)
+-- 🎀 Interfaz pequeña que NO MOLESTA y se cierra automáticamente
 -- 🔵 Barra de progreso AZUL BRILLANTE - Más visible
 -- 📊 Texto mejorado - Muestra porcentaje en tiempo real
 -- 🎨 Interfaz actualizada - Colores más vibrantes
 -- ⚡ Animaciones suaves - Transiciones mejoradas
 -- 🐛 Mejor manejo de errores y depuración
+-- ⏰ Timeout de seguridad (10 segundos)
 -- ================================================
 
 -- 📁 ARCHIVOS EN TU REPOSITORIO:
