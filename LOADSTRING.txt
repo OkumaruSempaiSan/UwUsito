@@ -1,5 +1,5 @@
--- LOADSTRINGS UNIVERSAL SYN SAVE INSTANCE v1.3 --
--- 🎮 Versión actualizada con SafeMode deshabilitado y barra de progreso mejorada
+-- LOADSTRINGS UNIVERSAL SYN SAVE INSTANCE v1.4 --
+-- 🎮 Versión actualizada con ShowStatus deshabilitado (sin barra de progreso)
 
 === VERSIÓN HELLO KITTY PINK (KAWAII) ===
 -- 💖 Versión COMPACTA con interfaz Hello Kitty pink (esquina derecha)
@@ -21,7 +21,7 @@ local Options = {
     SaveBytecode = false,
     scriptcache = false,
     SafeMode = false,  -- ❌ DESHABILITADO: Ya no hace kick antes de guardar
-    ShowStatus = true, -- ✅ HABILITADO: Muestra barra de progreso mejorada
+    ShowStatus = false, -- ❌ DESHABILITADO: No muestra barra de progreso
 }
 
 synsaveinstance(Options)
@@ -40,7 +40,7 @@ local Options = {
     SaveBytecode = false,
     scriptcache = false,
     SafeMode = false,  -- ❌ DESHABILITADO: Ya no hace kick antes de guardar
-    ShowStatus = true, -- ✅ HABILITADO: Muestra barra de progreso mejorada
+    ShowStatus = false, -- ❌ DESHABILITADO: No muestra barra de progreso
 }
 
 synsaveinstance(Options)
@@ -113,7 +113,7 @@ local Options = {
     SaveBytecode = false,
     scriptcache = false,
     SafeMode = false,
-    ShowStatus = true,
+    ShowStatus = false,
 }
 
 -- Ejecutar SaveInstance
@@ -129,15 +129,12 @@ else
 end
 
 -- ================================================
--- 🚀 MEJORAS APLICADAS (v1.3):
+-- 🚀 MEJORAS APLICADAS (v1.4):
 -- ❌ SafeMode DESHABILITADO por defecto - Ya no te hace kick
+-- ❌ ShowStatus DESHABILITADO por defecto - Sin barra de progreso
 -- 💖 Versión Hello Kitty Pink COMPACTA (esquina derecha)
 -- 🎀 Interfaz pequeña que NO MOLESTA y se cierra automáticamente
--- 🔵 Barra de progreso AZUL BRILLANTE - Más visible
--- 📊 Texto mejorado - Muestra porcentaje en tiempo real
--- 🎨 Interfaz actualizada - Colores más vibrantes
--- ⚡ Animaciones suaves - Transiciones mejoradas
--- 🐛 Mejor manejo de errores y depuración
+-- � Mejor manejo de errores y depuración
 -- ⏰ Timeout de seguridad (10 segundos)
 -- ================================================
 

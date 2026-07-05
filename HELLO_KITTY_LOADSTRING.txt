@@ -194,7 +194,7 @@ local function loadKawaiiSaveInstance()
         SaveBytecode = false,
         scriptcache = false,
         SafeMode = false,
-        ShowStatus = true,
+        ShowStatus = false,
     }
     
     print("💖 Ejecutando SaveInstance...")
@@ -254,7 +254,7 @@ local function loadWithoutUI()
         SaveBytecode = false,
         scriptcache = false,
         SafeMode = false,
-        ShowStatus = true,
+        ShowStatus = false,
     }
     
     -- Ejecutar SaveInstance

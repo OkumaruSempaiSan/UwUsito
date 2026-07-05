@@ -2523,7 +2523,7 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		NilInstancesFixes = {},
 
 		SaveCacheInterval = 0x1600 * 10,
-		ShowStatus = true,
+		ShowStatus = false,
 		KillAllScripts = true,
 		SafeMode = false,  -- Deshabilitado por defecto para evitar kick
 		BoostFPS = false,
