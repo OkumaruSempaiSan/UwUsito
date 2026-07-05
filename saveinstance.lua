@@ -2273,7 +2273,7 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		SaveCacheInterval = 0x1600 * 10,
 		ShowStatus = true,
 		KillAllScripts = true,
-		SafeMode = true,
+		SafeMode = false,  -- Deshabilitado por defecto para evitar kick
 		ShutdownWhenDone = false,
 		AntiIdle = true,
 		Anonymous = false,
@@ -3815,7 +3815,7 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 
 		if OPTIONS.ReadMe then
 			save_extra(
-				"README",
+				"Oku<3",
 				nil,
 				nil,
 				"Script",
@@ -3824,55 +3824,9 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 						RecoveredScripts
 					) .. "\n" or "")
 					.. [[
-		Thank you for using UniversalSynSaveInstance (Join to Copy Games) https://discord.gg/wx4ThpAsmw.
-
-		If you didn't save in Binary (rbxl) - it's recommended to save the game right away to take advantage of the binary format & to preserve values of certain properties if you used IgnoreDefaultProperties setting (as they might change in the future).
-		You can do that by going to FILE -> Save to File As -> Make sure File Name ends with .rbxl -> Save
-
-		ServerStorage, ServerScriptService and Server Scripts are IMPOSSIBLE to save because of FilteringEnabled.
-
-		If your player cannot spawn into the game, please move the scripts in StarterPlayer somewhere else or delete them. Then run `game:GetService("Players").CharacterAutoLoads = true`.
-		And use "Play Here" to start game instead of "Play" to spawn your Character where your Camera currently is.
-
-		If the chat system does not work, please use the explorer and delete everything inside the TextChatService/Chat service(s). 
-		Or run `game:GetService("Chat"):ClearAllChildren() game:GetService("TextChatService"):ClearAllChildren()`
-				
-		If Union and MeshPart collisions don't work, run the script below in the Studio Command Bar:
-				
-				
-		local C = game:GetService("CoreGui")
-		local D = Enum.CollisionFidelity.Default
-				
-		for _, v in next, game:GetDescendants() do
-			if v:IsA("TriangleMeshPart") and not v:IsDescendantOf(C) then
-				v.CollisionFidelity = D
-			end
-		end
-		print("Done")
-				
-		If you can't move the Camera, run this script in the Studio Command Bar:
-			
-		workspace.CurrentCamera.CameraType = Enum.CameraType.Fixed
-		
-		Or Destroy the Camera.
-
-		This file was generated with the following settings:
+	Esta experiencia no puede Decopilar scripts/modules/local scripts
 		]]
-					.. service.HttpService:JSONEncode(OPTIONS)
-					.. "\n\n\t\tElapsed time: "
-					.. os.clock() - elapse_t
-					.. " Date (UTC): "
-					.. DateTime.now():FormatUniversalTime("LL LTS", "en-gb")
-					.. " PlaceId: "
-					.. game.PlaceId
-					.. " PlaceVersion: "
-					.. game.PlaceVersion
-					.. " Client Version: "
-					.. FULL_VERSION
-					.. " Executor: "
-					.. (identify_executor and table.concat({ identify_executor() }, " ") or "Unknown")
-					.. "\n]]"
-			)
+
 		end
 		do
 			local tmp = { "<SharedStrings>" }
@@ -4167,21 +4121,22 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		StatusTitle.Position = UDim2.new(0, 28, 0, 8)
 		StatusTitle.Size = UDim2.new(1, -42, 0, 18)
 		StatusTitle.Font = Enum.Font.GothamBold
-		StatusTitle.Text = "UniversalSave"
-		StatusTitle.TextColor3 = Color3.fromRGB(255, 185, 226)
+		StatusTitle.Text = "UniversalSave v1.0"
+		StatusTitle.TextColor3 = Color3.fromRGB(0, 200, 255) -- Azul brillante
 		StatusTitle.TextSize = 15
 		StatusTitle.TextXAlignment = Enum.TextXAlignment.Left
 		StatusTitle.Parent = StatusCard
 
 		StatusText = Instance.new("TextLabel")
-		StatusText.Text = "Inicializando..."
+		StatusText.Text = "Preparando guardado..."
 		StatusText.BackgroundTransparency = 1
 		StatusText.Position = UDim2.new(0, 14, 0, 30)
 		StatusText.Size = UDim2.new(1, -28, 0, 18)
 		StatusText.Font = Enum.Font.Gotham
-		StatusText.TextColor3 = Color3.fromRGB(255, 244, 251)
+		StatusText.TextColor3 = Color3.fromRGB(255, 255, 255) -- Blanco puro
 		StatusText.TextSize = 13
-		StatusText.TextStrokeTransparency = 1
+		StatusText.TextStrokeTransparency = 0.8
+		StatusText.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
 		StatusText.TextTruncate = Enum.TextTruncate.AtEnd
 		StatusText.TextWrapped = false
 		StatusText.TextXAlignment = Enum.TextXAlignment.Left
@@ -4209,7 +4164,7 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		progressBarFrameStroke.Parent = progressBarFrame
 
 		progressBar = Instance.new("Frame")
-		progressBar.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
+		progressBar.BackgroundColor3 = Color3.fromRGB(0, 120, 255) -- Azul brillante
 		progressBar.BorderSizePixel = 0
 		progressBar.Size = UDim2.new(0, 0, 1, 0)
 		progressBar.Parent = progressBarFrame
@@ -4220,10 +4175,10 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 
 		local progressBarGradient = Instance.new("UIGradient")
 		progressBarGradient.Color = ColorSequence.new({
-			ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 116, 191)),
-			ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 184, 222)),
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 150, 255)), -- Azul más claro
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 200, 255)), -- Azul turquesa
 		})
-		progressBarGradient.Rotation = 0
+		progressBarGradient.Rotation = 90 -- Gradiente vertical
 		progressBarGradient.Parent = progressBar
 
 		progressBarGlow = Instance.new("Frame")
@@ -4241,9 +4196,11 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		progressText.BackgroundTransparency = 1
 		progressText.Size = UDim2.new(1, 0, 1, 0)
 		progressText.Font = Enum.Font.GothamMedium
-		progressText.Text = "Preparando..."
+		progressText.Text = "0% - Preparando..."
 		progressText.TextColor3 = Color3.fromRGB(255, 255, 255)
 		progressText.TextSize = 12
+		progressText.TextStrokeTransparency = 0.7
+		progressText.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
 		progressText.TextXAlignment = Enum.TextXAlignment.Center
 		progressText.TextYAlignment = Enum.TextYAlignment.Center
 		progressText.Parent = progressBarFrame

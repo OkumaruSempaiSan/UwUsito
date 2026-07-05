@@ -1,4 +1,5 @@
--- LOADSTRINGS UNIVERSAL SYN SAVE INSTANCE --
+-- LOADSTRINGS UNIVERSAL SYN SAVE INSTANCE v1.1 --
+-- 🎮 Versión actualizada con SafeMode deshabilitado y barra de progreso mejorada
 
 === VERSIÓN LUAU (RECOMENDADA) ===
 local Params = {
@@ -8,10 +9,13 @@ local Params = {
 
 local synsaveinstance = loadstring(game:HttpGet(Params.RepoURL .. Params.SSI .. ".luau", true), Params.SSI)()
 
+-- ⚙️ OPCIONES RECOMENDADAS:
 local Options = {
     Decompile = false,
     SaveBytecode = false,
     scriptcache = false,
+    SafeMode = false,  -- ❌ DESHABILITADO: Ya no hace kick antes de guardar
+    ShowStatus = true, -- ✅ HABILITADO: Muestra barra de progreso mejorada
 }
 
 synsaveinstance(Options)
@@ -24,21 +28,30 @@ local Params = {
 
 local synsaveinstance = loadstring(game:HttpGet(Params.RepoURL .. Params.SSI .. ".lua", true), Params.SSI)()
 
+-- ⚙️ OPCIONES RECOMENDADAS:
 local Options = {
     Decompile = false,
     SaveBytecode = false,
     scriptcache = false,
+    SafeMode = false,  -- ❌ DESHABILITADO: Ya no hace kick antes de guardar
+    ShowStatus = true, -- ✅ HABILITADO: Muestra barra de progreso mejorada
 }
 
 synsaveinstance(Options)
 
--- ================================
--- ⚡ CARACTERÍSTICAS:
--- - Barra de progreso decompilación con colores pink/rositas
--- - Porcentaje en tiempo real (0-100%)
--- - Actualización automática mientras decompila scripts
--- ================================
+-- ================================================
+-- 🚀 MEJORAS APLICADAS (v1.1):
+-- ❌ SafeMode DESHABILITADO por defecto - Ya no te hace kick
+-- 🔵 Barra de progreso AZUL BRILLANTE - Más visible
+-- 📊 Texto mejorado - Muestra porcentaje en tiempo real
+-- 🎨 Interfaz actualizada - Colores más vibrantes
+-- ⚡ Animaciones suaves - Transiciones mejoradas
+-- ================================================
 
 -- 📁 ARCHIVOS EN TU REPOSITORIO:
--- saveinstance.luau (versión principal con barra de progreso)
--- saveinstance.lua (versión Lua con barra de progreso)
+-- saveinstance.luau (versión principal actualizada)
+-- saveinstance.lua (versión Lua actualizada)
+-- LICENSE (licencia del proyecto)
+
+-- 💡 CONSEJO: Si quieres habilitar SafeMode nuevamente por seguridad,
+-- simplemente cambia "SafeMode = false" a "SafeMode = true" en las opciones.

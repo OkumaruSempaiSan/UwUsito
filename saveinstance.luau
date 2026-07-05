@@ -2525,7 +2525,7 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		SaveCacheInterval = 0x1600 * 10,
 		ShowStatus = true,
 		KillAllScripts = true,
-		SafeMode = true,
+		SafeMode = false,  -- Deshabilitado por defecto para evitar kick
 		BoostFPS = false,
 		ShutdownWhenDone = false,
 		AntiIdle = true,
@@ -2928,6 +2928,72 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		return BLOCKED_SCRIPT_SOURCE_CLASSES[instance.ClassName] == true
 	end
 
+	-- Función para verificar si una instancia es un Remote o similar
+	local REMOTE_AND_MODULE_CLASSES = {
+		RemoteEvent = true,
+		RemoteFunction = true,
+		BindableEvent = true,
+		BindableFunction = true,
+		ModuleScript = true,
+	}
+
+	local function isRemoteOrModule(instance)
+		return REMOTE_AND_MODULE_CLASSES[instance.ClassName] == true
+	end
+
+	-- Función para procesar jerarquía primero remotes/módulos, luego folders
+	local function process_hierarchy_with_priority(hierarchy)
+		local processed = {}
+		local remotes_and_modules = {}
+		local other_instances = {}
+		local empty_folders_to_skip = {}
+
+		-- Primero: separar remotes/módulos de otras instancias
+		for _, instance in hierarchy do
+			if isRemoteOrModule(instance) then
+				table.insert(remotes_and_modules, instance)
+			else
+				table.insert(other_instances, instance)
+			end
+		end
+
+		-- Segundo: procesar remotes y módulos primero
+		if #remotes_and_modules > 0 then
+			for _, instance in remotes_and_modules do
+				table.insert(processed, instance)
+			end
+		end
+
+		-- Tercero: procesar otras instancias, verificando folders vacíos
+		for _, instance in other_instances do
+			local ClassName = instance.ClassName
+			
+			-- Verificar si es un folder y está vacío
+			if ClassName == "Folder" then
+				local children = instance:GetChildren()
+				local has_non_remote_content = false
+				
+				-- Verificar si el folder tiene contenido que no sea remotes/módulos
+				for _, child in children do
+					if not isRemoteOrModule(child) then
+						has_non_remote_content = true
+						break
+					end
+				end
+				
+				-- Si el folder solo tiene remotes/módulos (que ya procesamos), no lo guardamos
+				if not has_non_remote_content and #children > 0 then
+					table.insert(empty_folders_to_skip, instance)
+					continue
+				end
+			end
+			
+			table.insert(processed, instance)
+		end
+
+		return processed, empty_folders_to_skip
+	end
+
 	local function isLuaSourceContainer(instance)
 		return instance:IsA("LuaSourceContainer")
 	end
@@ -2944,42 +3010,57 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 			percent = math.floor((decompiledScriptsCount / totalScriptsToDecompile) * 100)
 		end
 
-		-- Actualizar barra de progreso
-		progressBar.Size = UDim2.new(0, 0, 1, 0)
+		-- Actualizar barra de progreso de forma suave
+		local targetSize = percent / 100
+		local currentSize = progressBar.Size.X.Scale
+		local startTime = tick()
+		local duration = 0.2 -- Animación más rápida
+		
 		task.spawn(function()
-			local targetSize = percent / 100
-			local startTime = tick()
-			local duration = 0.3 -- Duración de la animación en segundos
-
-			while true do
+			while tick() - startTime < duration do
 				local elapsed = tick() - startTime
 				local progress = math.min(elapsed / duration, 1)
-				local currentPercent = progress * targetSize
-				progressBar.Size = UDim2.new(currentPercent, 0, 1, 0)
-
-				if progress >= 1 then
-					break
-				end
-
+				local easedProgress = progress * progress * (3 - 2 * progress) -- Easing cuadrático
+				local animatedSize = currentSize + (targetSize - currentSize) * easedProgress
+				progressBar.Size = UDim2.new(animatedSize, 0, 1, 0)
 				task.wait()
 			end
+			progressBar.Size = UDim2.new(targetSize, 0, 1, 0)
 		end)
 
-		-- Actualizar texto con porcentaje
-		local colorPink = Color3.fromRGB(255, 105, 180)
-		local colorLightPink = Color3.fromRGB(255, 182, 193)
-
+		-- Actualizar texto con porcentaje y color dinámico
+		local baseColor = Color3.fromRGB(0, 120, 255) -- Azul
+		local completedColor = Color3.fromRGB(0, 255, 100) -- Verde brillante
+		
+		-- Color intermedio basado en el porcentaje
+		local currentColor
 		if percent >= 100 then
-			colorPink = Color3.fromRGB(0, 255, 0) -- Verde cuando termina
-			colorLightPink = Color3.fromRGB(144, 238, 144) -- Verde claro
-			progressText.Text = "¡Completado! " .. decompiledScriptsCount .. "/" .. totalScriptsToDecompile .. " scripts"
+			currentColor = completedColor
+			progressText.Text = "✓ Completado: " .. decompiledScriptsCount .. "/" .. totalScriptsToDecompile .. " scripts"
+			StatusText.Text = "UniversalSynSaveInstance - Guardado completado!"
 		else
-			progressText.Text = "Decompilando: " .. percent .. "%"
+			-- Interpolación de color según porcentaje
+			local factor = percent / 100
+			currentColor = Color3.new(
+				baseColor.R * (1 - factor) + completedColor.R * factor,
+				baseColor.G * (1 - factor) + completedColor.G * factor,
+				baseColor.B * (1 - factor) + completedColor.B * factor
+			)
+			progressText.Text = "Progreso: " .. percent .. "% (" .. decompiledScriptsCount .. "/" .. totalScriptsToDecompile .. ")"
+			StatusText.Text = "UniversalSynSaveInstance - Guardando..."
 		end
 
-		-- Actualizar colores de la barra
-		progressBar.BackgroundColor3 = colorPink
-		progressBarGlow.BackgroundColor3 = colorLightPink
+		-- Actualizar color de la barra
+		progressBar.BackgroundColor3 = currentColor
+		
+		-- Actualizar también el efecto de brillo
+		if progressBarGlow then
+			progressBarGlow.BackgroundColor3 = Color3.new(
+				currentColor.R * 1.3,
+				currentColor.G * 1.3,
+				currentColor.B * 1.3
+			)
+		end
 	end
 
 	local function setTotalScripts(total)
@@ -3599,7 +3680,21 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 	local gethiddenproperty_fallback
 
 	local function save_hierarchy(hierarchy)
-		for _, instance in hierarchy do
+		-- Procesar jerarquía con prioridad: primero remotes/módulos, luego verificar folders vacíos
+		local processed_hierarchy, empty_folders_to_skip = process_hierarchy_with_priority(hierarchy)
+		
+		-- Registrar folders vacíos para saltar
+		local skip_folders = {}
+		for _, folder in empty_folders_to_skip do
+			skip_folders[folder] = true
+		end
+		
+		for _, instance in processed_hierarchy do
+			-- Saltar folders que quedaron vacíos después de procesar remotes/módulos
+			if skip_folders[instance] then
+				continue
+			end
+			
 			local InstanceOverride, ClassTagOverride, ClassNameOverride
 
 			if not InstanceOverride then
@@ -4373,31 +4468,34 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 
 		-- Crear el texto de estado
 		StatusText = Instance.new("TextLabel")
-		StatusText.Text = "Saving..."
-		StatusText.BackgroundTransparency = 1
+		StatusText.Text = "UniversalSynSaveInstance - Saving..."
+		StatusText.BackgroundTransparency = 0.8
+		StatusText.BackgroundColor3 = Color3.new(0, 0, 0)
 		StatusText.Font = Enum.Font.Code
 		StatusText.AnchorPoint = Vector2.new(1)
-		StatusText.Position = UDim2.new(1, -10, 0, 40)
-		StatusText.Size = UDim2.new(0.3, 0, 0, 20)
+		StatusText.Position = UDim2.new(1, -10, 0, 65)
+		StatusText.Size = UDim2.new(0.35, 0, 0, 25)
 		StatusText.TextColor3 = Color3.new(1, 1, 1)
 		StatusText.TextScaled = true
-		StatusText.TextStrokeTransparency = 0.7
+		StatusText.TextStrokeTransparency = 0.5
+		StatusText.TextStrokeColor3 = Color3.new(0, 0, 0)
 		StatusText.TextXAlignment = Enum.TextXAlignment.Right
 		StatusText.TextYAlignment = Enum.TextYAlignment.Top
 
 		-- Crear el marco de la barra de progreso
 		progressBarFrame = Instance.new("Frame")
-		progressBarFrame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
-		progressBarFrame.BackgroundTransparency = 0.3
-		progressBarFrame.BorderSizePixel = 0
+		progressBarFrame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
+		progressBarFrame.BackgroundTransparency = 0.2
+		progressBarFrame.BorderSizePixel = 2
+		progressBarFrame.BorderColor3 = Color3.new(0.3, 0.3, 0.3)
 		progressBarFrame.AnchorPoint = Vector2.new(1)
-		progressBarFrame.Position = UDim2.new(1, -10, 0, 10)
-		progressBarFrame.Size = UDim2.new(0.3, 0, 0, 20)
+		progressBarFrame.Position = UDim2.new(1, -10, 0, 30)
+		progressBarFrame.Size = UDim2.new(0.35, 0, 0, 25)
 		progressBarFrame.Parent = StatusGui
 
-		-- Crear la barra de progreso interna (colores pink/rositas)
+		-- Crear la barra de progreso interna (colores azul/vibrante)
 		progressBar = Instance.new("Frame")
-		progressBar.BackgroundColor3 = Color3.fromRGB(255, 105, 180) -- Hot pink
+		progressBar.BackgroundColor3 = Color3.fromRGB(0, 120, 255) -- Azul brillante
 		progressBar.BorderSizePixel = 0
 		progressBar.Position = UDim2.new(0, 0, 0, 0)
 		progressBar.Size = UDim2.new(0, 0, 1, 0) -- Comienza en 0%
@@ -4405,12 +4503,13 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 
 		-- Crear el texto del porcentaje
 		progressText = Instance.new("TextLabel")
-		progressText.Text = "Decompilando: 0%"
+		progressText.Text = "Preparando... 0%"
 		progressText.BackgroundTransparency = 1
 		progressText.Font = Enum.Font.Code
 		progressText.TextColor3 = Color3.new(1, 1, 1)
 		progressText.TextScaled = true
-		progressText.TextStrokeTransparency = 0.7
+		progressText.TextStrokeTransparency = 0.5
+		progressText.TextStrokeColor3 = Color3.new(0, 0, 0)
 		progressText.Size = UDim2.new(1, 0, 1, 0)
 		progressText.TextXAlignment = Enum.TextXAlignment.Center
 		progressText.TextYAlignment = Enum.TextYAlignment.Center
