@@ -2225,6 +2225,13 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		'<!-- Saved by UniversalSynSaveInstance (Join to Copy Games) https://discord.gg/wx4ThpAsmw --><roblox version="4">'
 
 	local StatusText
+	local StatusGuiInstance
+	local progressBarFrame
+	local progressBar
+	local progressBarGlow
+	local progressText
+	local progressLoop
+	local progressLoopActive = false
 
 	local OPTIONS = {
 		mode = "optimized",
@@ -2811,6 +2818,104 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		end
 
 		return Size
+	end
+
+	local TweenService = service.TweenService or game:GetService("TweenService")
+	local function tweenGuiObject(instance, tweenInfo, properties)
+		if not instance then
+			return nil
+		end
+
+		local ok, tween = pcall(TweenService.Create, TweenService, instance, tweenInfo, properties)
+		if ok and tween then
+			tween:Play()
+			return tween
+		end
+
+		for property, value in properties do
+			instance[property] = value
+		end
+
+		return nil
+	end
+
+	local function setProgressVisual(fillScale, barText, fillColor, glowColor)
+		if not progressBarFrame or not progressBar or not progressText then
+			return
+		end
+
+		fillScale = math.clamp(fillScale or 0, 0, 1)
+		progressText.Text = barText or progressText.Text
+
+		if fillColor then
+			progressBar.BackgroundColor3 = fillColor
+		end
+
+		if progressBarGlow and glowColor then
+			progressBarGlow.BackgroundColor3 = glowColor
+		end
+
+		tweenGuiObject(progressBar, TweenInfo.new(0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+			Size = UDim2.new(fillScale, 0, 1, 0),
+		})
+	end
+
+	local function stopProgressAnimation(isSuccessful, isFailed)
+		progressLoopActive = false
+		if progressLoop then
+			task.cancel(progressLoop)
+			progressLoop = nil
+		end
+
+		if isSuccessful then
+			setProgressVisual(1, "Completado", Color3.fromRGB(255, 123, 190), Color3.fromRGB(255, 205, 233))
+		elseif isFailed then
+			setProgressVisual(1, "Error", Color3.fromRGB(255, 110, 160), Color3.fromRGB(255, 190, 220))
+		else
+			setProgressVisual(0, "Preparando...", Color3.fromRGB(255, 105, 180), Color3.fromRGB(255, 182, 193))
+		end
+	end
+
+	local function startProgressAnimation()
+		if progressLoopActive or not progressBarFrame or not progressBar or not progressText then
+			return
+		end
+
+		progressLoopActive = true
+		local fills = { 0.18, 0.38, 0.57, 0.79, 0.46, 0.86, 0.28, 0.65 }
+		local labels = {
+			"Preparando...",
+			"Escaneando...",
+			"Guardando...",
+			"Procesando...",
+			"Empaquetando...",
+		}
+
+		progressLoop = task.spawn(function()
+			local fillIndex = 1
+			local labelIndex = 1
+
+			while progressLoopActive and progressBarFrame and progressBarFrame.Parent do
+				setProgressVisual(
+					fills[fillIndex],
+					labels[labelIndex],
+					Color3.fromRGB(255, 105, 180),
+					Color3.fromRGB(255, 182, 193)
+				)
+
+				fillIndex += 1
+				if fillIndex > #fills then
+					fillIndex = 1
+				end
+
+				labelIndex += 1
+				if labelIndex > #labels then
+					labelIndex = 1
+				end
+
+				task.wait(0.45)
+			end
+		end)
 	end
 
 	local RunService = service.RunService
@@ -3996,29 +4101,152 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		local StatusGui = Instance.new("ScreenGui")
 
 		GLOBAL_ENV._statustext = StatusGui
+		StatusGuiInstance = StatusGui
 
 		StatusGui.DisplayOrder = 2e9
-		pcall(function() -- ? Compatibility with level 2
+		StatusGui.IgnoreGuiInset = true
+		pcall(function()
 			StatusGui.OnTopOfCoreBlur = true
 		end)
 
+		local Shadow = Instance.new("Frame")
+		Shadow.AnchorPoint = Vector2.new(1, 0)
+		Shadow.Position = UDim2.new(1, -12, 0, 20)
+		Shadow.Size = UDim2.new(0, 350, 0, 98)
+		Shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+		Shadow.BackgroundTransparency = 0.52
+		Shadow.BorderSizePixel = 0
+		Shadow.ZIndex = 0
+		Shadow.Parent = StatusGui
+
+		local ShadowCorner = Instance.new("UICorner")
+		ShadowCorner.CornerRadius = UDim.new(0, 22)
+		ShadowCorner.Parent = Shadow
+
+		local StatusCard = Instance.new("Frame")
+		StatusCard.AnchorPoint = Vector2.new(1, 0)
+		StatusCard.Position = UDim2.new(1, -16, 0, 16)
+		StatusCard.Size = UDim2.new(0, 350, 0, 98)
+		StatusCard.BackgroundColor3 = Color3.fromRGB(28, 20, 34)
+		StatusCard.BackgroundTransparency = 0.08
+		StatusCard.BorderSizePixel = 0
+		StatusCard.Parent = StatusGui
+
+		local StatusCardCorner = Instance.new("UICorner")
+		StatusCardCorner.CornerRadius = UDim.new(0, 22)
+		StatusCardCorner.Parent = StatusCard
+
+		local StatusCardStroke = Instance.new("UIStroke")
+		StatusCardStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+		StatusCardStroke.Color = Color3.fromRGB(255, 150, 212)
+		StatusCardStroke.Thickness = 1.2
+		StatusCardStroke.Transparency = 0.18
+		StatusCardStroke.Parent = StatusCard
+
+		local StatusCardGradient = Instance.new("UIGradient")
+		StatusCardGradient.Color = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(34, 24, 42)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(58, 30, 62)),
+		})
+		StatusCardGradient.Rotation = 18
+		StatusCardGradient.Parent = StatusCard
+
+		local Accent = Instance.new("Frame")
+		Accent.Position = UDim2.new(0, 14, 0, 12)
+		Accent.Size = UDim2.new(0, 8, 0, 8)
+		Accent.BackgroundColor3 = Color3.fromRGB(255, 150, 212)
+		Accent.BorderSizePixel = 0
+		Accent.Parent = StatusCard
+
+		local AccentCorner = Instance.new("UICorner")
+		AccentCorner.CornerRadius = UDim.new(1, 0)
+		AccentCorner.Parent = Accent
+
+		local StatusTitle = Instance.new("TextLabel")
+		StatusTitle.BackgroundTransparency = 1
+		StatusTitle.Position = UDim2.new(0, 28, 0, 8)
+		StatusTitle.Size = UDim2.new(1, -42, 0, 18)
+		StatusTitle.Font = Enum.Font.GothamBold
+		StatusTitle.Text = "UniversalSave"
+		StatusTitle.TextColor3 = Color3.fromRGB(255, 185, 226)
+		StatusTitle.TextSize = 15
+		StatusTitle.TextXAlignment = Enum.TextXAlignment.Left
+		StatusTitle.Parent = StatusCard
+
 		StatusText = Instance.new("TextLabel")
-
-		StatusText.Text = "Saving..."
-
+		StatusText.Text = "Inicializando..."
 		StatusText.BackgroundTransparency = 1
-		StatusText.Font = Enum.Font.Code
-		StatusText.AnchorPoint = Vector2.new(1)
-		StatusText.Position = UDim2.new(1)
-		StatusText.Size = UDim2.new(0.3, 0, 0, 20)
+		StatusText.Position = UDim2.new(0, 14, 0, 30)
+		StatusText.Size = UDim2.new(1, -28, 0, 18)
+		StatusText.Font = Enum.Font.Gotham
+		StatusText.TextColor3 = Color3.fromRGB(255, 244, 251)
+		StatusText.TextSize = 13
+		StatusText.TextStrokeTransparency = 1
+		StatusText.TextTruncate = Enum.TextTruncate.AtEnd
+		StatusText.TextWrapped = false
+		StatusText.TextXAlignment = Enum.TextXAlignment.Left
+		StatusText.TextYAlignment = Enum.TextYAlignment.Center
+		StatusText.Parent = StatusCard
 
-		StatusText.TextColor3 = Color3.new(1, 1, 1)
-		StatusText.TextScaled = true
-		StatusText.TextStrokeTransparency = 0.7
-		StatusText.TextXAlignment = Enum.TextXAlignment.Right
-		StatusText.TextYAlignment = Enum.TextYAlignment.Top
+		progressBarFrame = Instance.new("Frame")
+		progressBarFrame.Position = UDim2.new(0, 14, 0, 58)
+		progressBarFrame.Size = UDim2.new(1, -28, 0, 22)
+		progressBarFrame.BackgroundColor3 = Color3.fromRGB(52, 34, 58)
+		progressBarFrame.BackgroundTransparency = 0.1
+		progressBarFrame.BorderSizePixel = 0
+		progressBarFrame.ClipsDescendants = true
+		progressBarFrame.Parent = StatusCard
 
-		StatusText.Parent = StatusGui
+		local progressBarFrameCorner = Instance.new("UICorner")
+		progressBarFrameCorner.CornerRadius = UDim.new(1, 0)
+		progressBarFrameCorner.Parent = progressBarFrame
+
+		local progressBarFrameStroke = Instance.new("UIStroke")
+		progressBarFrameStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+		progressBarFrameStroke.Color = Color3.fromRGB(255, 165, 218)
+		progressBarFrameStroke.Thickness = 1
+		progressBarFrameStroke.Transparency = 0.35
+		progressBarFrameStroke.Parent = progressBarFrame
+
+		progressBar = Instance.new("Frame")
+		progressBar.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
+		progressBar.BorderSizePixel = 0
+		progressBar.Size = UDim2.new(0, 0, 1, 0)
+		progressBar.Parent = progressBarFrame
+
+		local progressBarCorner = Instance.new("UICorner")
+		progressBarCorner.CornerRadius = UDim.new(1, 0)
+		progressBarCorner.Parent = progressBar
+
+		local progressBarGradient = Instance.new("UIGradient")
+		progressBarGradient.Color = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 116, 191)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 184, 222)),
+		})
+		progressBarGradient.Rotation = 0
+		progressBarGradient.Parent = progressBar
+
+		progressBarGlow = Instance.new("Frame")
+		progressBarGlow.BackgroundColor3 = Color3.fromRGB(255, 200, 227)
+		progressBarGlow.BackgroundTransparency = 0.52
+		progressBarGlow.BorderSizePixel = 0
+		progressBarGlow.Size = UDim2.new(1, 0, 1, 0)
+		progressBarGlow.Parent = progressBar
+
+		local progressBarGlowCorner = Instance.new("UICorner")
+		progressBarGlowCorner.CornerRadius = UDim.new(1, 0)
+		progressBarGlowCorner.Parent = progressBarGlow
+
+		progressText = Instance.new("TextLabel")
+		progressText.BackgroundTransparency = 1
+		progressText.Size = UDim2.new(1, 0, 1, 0)
+		progressText.Font = Enum.Font.GothamMedium
+		progressText.Text = "Preparando..."
+		progressText.TextColor3 = Color3.fromRGB(255, 255, 255)
+		progressText.TextSize = 12
+		progressText.TextXAlignment = Enum.TextXAlignment.Center
+		progressText.TextYAlignment = Enum.TextYAlignment.Center
+		progressText.Parent = progressBarFrame
 
 		local function randomString()
 			local length = math.random(10, 20)
@@ -4047,6 +4275,8 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 				end
 			end
 		end
+
+		startProgressAnimation()
 	end
 
 	do
@@ -4269,10 +4499,12 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		if StatusText then
 			task.spawn(function()
 				if ok then
+					stopProgressAnimation(true, false)
 					StatusText.Text = string.format("Saved! Time %.3f seconds; Size %s", elapse_t, get_size_format())
-					StatusText.TextColor3 = Color3.new(0, 1)
+					StatusText.TextColor3 = Color3.fromRGB(255, 244, 251)
 					task.wait(Log10 * 2 + ExtraTime)
 				else
+					stopProgressAnimation(false, true)
 					if Loading then
 						task.cancel(Loading)
 						Loading = nil
@@ -4283,7 +4515,11 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 					warn(err)
 					task.wait(Log10 + ExtraTime)
 				end
-				StatusText:Destroy()
+				if StatusGuiInstance then
+					StatusGuiInstance:Destroy()
+				else
+					StatusText:Destroy()
+				end
 			end)
 		end
 
