@@ -1,0 +1,23 @@
+-- CÓDIGO LOADSTRING ACTUALIZADO --
+
+local Params = {
+    RepoURL = "https://raw.githubusercontent.com/OkumaruSempaiSan/UwUsito/main/",
+    SSI = "saveinstance",
+} 
+
+local synsaveinstance = loadstring(game:HttpGet(Params.RepoURL .. Params.SSI .. ".luau", true), Params.SSI)()
+
+local Options = {
+    Decompile = false,
+    SaveBytecode = false,
+    scriptcache = false,
+}
+
+synsaveinstance(Options)
+
+-- ================================
+-- ⚡ CARACTERÍSTICAS:
+-- - Barra de progreso decompilación con colores pink/rositas
+-- - Porcentaje en tiempo real (0-100%)
+-- - Actualización automática mientras decompila scripts
+-- ================================
