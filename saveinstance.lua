@@ -2271,7 +2271,7 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		NilInstancesFixes = {},
 
 		SaveCacheInterval = 0x1600 * 10,
-		ShowStatus = false,
+		ShowStatus = true,
 		KillAllScripts = true,
 		SafeMode = false,  -- Deshabilitado por defecto para evitar kick
 		ShutdownWhenDone = false,

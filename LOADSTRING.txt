@@ -21,7 +21,7 @@ local Options = {
     SaveBytecode = false,
     scriptcache = false,
     SafeMode = false,  -- ❌ DESHABILITADO: Ya no hace kick antes de guardar
-    ShowStatus = false, -- ❌ DESHABILITADO: No muestra barra de progreso
+    ShowStatus = true, -- ❌ DESHABILITADO: No muestra barra de progreso
 }
 
 synsaveinstance(Options)
@@ -40,7 +40,7 @@ local Options = {
     SaveBytecode = false,
     scriptcache = false,
     SafeMode = false,  -- ❌ DESHABILITADO: Ya no hace kick antes de guardar
-    ShowStatus = false, -- ❌ DESHABILITADO: No muestra barra de progreso
+    ShowStatus = true, -- ❌ DESHABILITADO: No muestra barra de progreso
 }
 
 synsaveinstance(Options)
@@ -113,7 +113,7 @@ local Options = {
     SaveBytecode = false,
     scriptcache = false,
     SafeMode = false,
-    ShowStatus = false,
+    ShowStatus = true,
 }
 
 -- Ejecutar SaveInstance
