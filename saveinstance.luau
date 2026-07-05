@@ -2894,6 +2894,14 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 	local ldeccache = GLOBAL_ENV.scriptcache
 
 	local DecompileIgnoring, ToSaveList, ldecompile, placename, elapse_t, SaveNotCreatableWillBeEnabled, RecoveredScripts
+	
+	-- Variables para la barra de progreso de decompilación
+	local decompilationProgress = 0
+	local totalScriptsToDecompile = 0
+	local decompiledScriptsCount = 0
+	local progressBarFrame = nil
+	local progressBar = nil
+	local progressText = nil
 
 	if OPTIONS.ReadMe then
 		RecoveredScripts = {}
@@ -4276,21 +4284,58 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 			StatusGui.OnTopOfCoreBlur = true
 		end)
 
+		-- Crear el texto de estado
 		StatusText = Instance.new("TextLabel")
-
 		StatusText.Text = "Saving..."
-
 		StatusText.BackgroundTransparency = 1
 		StatusText.Font = Enum.Font.Code
 		StatusText.AnchorPoint = Vector2.new(1)
-		StatusText.Position = UDim2.new(1)
+		StatusText.Position = UDim2.new(1, -10, 0, 40)
 		StatusText.Size = UDim2.new(0.3, 0, 0, 20)
-
 		StatusText.TextColor3 = Color3.new(1, 1, 1)
 		StatusText.TextScaled = true
 		StatusText.TextStrokeTransparency = 0.7
 		StatusText.TextXAlignment = Enum.TextXAlignment.Right
 		StatusText.TextYAlignment = Enum.TextYAlignment.Top
+
+		-- Crear el marco de la barra de progreso
+		progressBarFrame = Instance.new("Frame")
+		progressBarFrame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+		progressBarFrame.BackgroundTransparency = 0.3
+		progressBarFrame.BorderSizePixel = 0
+		progressBarFrame.AnchorPoint = Vector2.new(1)
+		progressBarFrame.Position = UDim2.new(1, -10, 0, 10)
+		progressBarFrame.Size = UDim2.new(0.3, 0, 0, 20)
+		progressBarFrame.Parent = StatusGui
+
+		-- Crear la barra de progreso interna (colores pink/rositas)
+		progressBar = Instance.new("Frame")
+		progressBar.BackgroundColor3 = Color3.fromRGB(255, 105, 180) -- Hot pink
+		progressBar.BorderSizePixel = 0
+		progressBar.Position = UDim2.new(0, 0, 0, 0)
+		progressBar.Size = UDim2.new(0, 0, 1, 0) -- Comienza en 0%
+		progressBar.Parent = progressBarFrame
+
+		-- Crear el texto del porcentaje
+		progressText = Instance.new("TextLabel")
+		progressText.Text = "Decompilando: 0%"
+		progressText.BackgroundTransparency = 1
+		progressText.Font = Enum.Font.Code
+		progressText.TextColor3 = Color3.new(1, 1, 1)
+		progressText.TextScaled = true
+		progressText.TextStrokeTransparency = 0.7
+		progressText.Size = UDim2.new(1, 0, 1, 0)
+		progressText.TextXAlignment = Enum.TextXAlignment.Center
+		progressText.TextYAlignment = Enum.TextYAlignment.Center
+		progressText.Parent = progressBarFrame
+
+		-- Agregar efecto de brillo a la barra de progreso
+		local progressBarGlow = Instance.new("Frame")
+		progressBarGlow.BackgroundColor3 = Color3.fromRGB(255, 182, 193) -- Light pink
+		progressBarGlow.BackgroundTransparency = 0.5
+		progressBarGlow.BorderSizePixel = 0
+		progressBarGlow.Size = UDim2.new(1, 0, 1, 0)
+		progressBarGlow.Parent = progressBar
 
 		StatusText.Parent = StatusGui
 
